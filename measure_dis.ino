@@ -5,7 +5,7 @@ const int trigPin_right = 7;
 const int echoPin_right = 8;
 const int timeout =100;//pulesInのタイムアウト時間（マイクロ秒）
 //設定
-
+//更新確認
 int lost=0;//見失ったとき1にする
 double space=4;//車間距離cm
 
