@@ -1,8 +1,3 @@
-
-// const int trigPin_left = 2;
-// const int echoPin_left = 3;
-// const int trigPin_right = 7;
-// const int echoPin_right = 8;
 const int timeout =100;//pulesInのタイムアウト時間（マイクロ秒）
 //設定
 #include "pin_num.h"
@@ -42,12 +37,12 @@ void setup() {
   pinMode(trigPin_right, OUTPUT);
   pinMode(echoPin_right, INPUT);
 
-  pinMode(2, OUTPUT);
-  pinMode(3, OUTPUT);
-  pinMode(4, OUTPUT);
-  pinMode(7, OUTPUT);
-  pinMode(8, OUTPUT);
-  pinMode(9, OUTPUT);
+  pinMode(motorV1_right, OUTPUT);
+  pinMode(motorP_right, OUTPUT);
+  pinMode(motorV2_right, OUTPUT);
+  pinMode(motorV1_left, OUTPUT);
+  pinMode(motorV2_left, OUTPUT);
+  pinMode(motorP_left, OUTPUT);
 }
 void loop() {
   forward_mode();
@@ -93,8 +88,8 @@ void lost_ctrl(double diff,double dist){//lost時の制御 I制御を行って�
   //制御を行う
 
   //なにか倍率をかける？
-  analogWrite(3,mag*(base_duty-adj));//右制御
-  analogWrite(9,mag*(base_duty+adj));//左制御
+  analogWrite(motorP_right,mag*(base_duty-adj));//右制御
+  analogWrite(motorP_left,mag*(base_duty+adj));//左制御
 }
 
 double get_mag(double dist,double space){//回転数に作用する倍率を決める もっとうまくやれるかも
@@ -103,6 +98,15 @@ double get_mag(double dist,double space){//回転数に作用する倍率を決�
   }else{
     return 0;
   }
+}
+
+
+void forward_mode(){
+  digitalWrite(2,HIGH);
+  digitalWrite(4,LOW);
+  digitalWrite(7,HIGH);
+  digitalWrite(8,LOW);
+  //前進するよ
 }
 
 // double PID_calc(double x){//PID制御の計算部分
@@ -123,13 +127,6 @@ double get_mag(double dist,double space){//回転数に作用する倍率を決�
   
 //   return Kp2*P;
 // }
-void forward_mode(){
-  digitalWrite(2,HIGH);
-  digitalWrite(4,LOW);
-  digitalWrite(7,HIGH);
-  digitalWrite(8,LOW);
-  //前進するよ
-}
 
 // double get_dist(int trig,int echo){ //距離を返す。タイムアウト時はlostを1にして0を返す。
 //   double duration,distance;
