@@ -1,13 +1,14 @@
 
-const int trigPin_left = 2;
-const int echoPin_left = 3;
-const int trigPin_right = 7;
-const int echoPin_right = 8;
+// const int trigPin_left = 2;
+// const int echoPin_left = 3;
+// const int trigPin_right = 7;
+// const int echoPin_right = 8;
 const int timeout =100;//pulesInのタイムアウト時間（マイクロ秒）
 //設定
-//更新確認
+#include "pin_num.h"
 int lost=0;//見失ったとき1にする
 double space=4;//車間距離cm
+int base_duty=50;
 
 double Kp=0;
 double Ki=0;
@@ -62,7 +63,7 @@ void following(){
   dist=(Ldist+Rdist)/2;//左右差と平均距離を導出
 
   if(lost==1){
-    lost_ctrl(prediff,predost);
+    lost_ctrl(prediff,predist);
   }else{
     clearlost();
     regular_ctrl(LRdiff,dist);
@@ -75,7 +76,7 @@ void clearlost(){
 }
 
 void regular_ctrl(double LRdiff,double dist){//平常時の制御
-  adj=PIDcalc(LRdiff);
+  adj=PID_calc(LRdiff);
   mag=get_mag(dist,space);
   //制御を行う
 
@@ -87,7 +88,7 @@ void regular_ctrl(double LRdiff,double dist){//平常時の制御
 
 void lost_ctrl(double diff,double dist){//lost時の制御 I制御を行ってもいいかも
 
-  adj=PIDcalc(diff);
+  adj=PID_calc(diff);
   mag=get_mag(dist,space);
   //制御を行う
 
@@ -104,24 +105,24 @@ double get_mag(double dist,double space){//回転数に作用する倍率を決�
   }
 }
 
-double PID_calc(double x){//PID制御の計算部分
+// double PID_calc(double x){//PID制御の計算部分
 
-  dt = (micros()-pretime)/1000000;
-  pretime = micros();
+//   dt = (micros()-pretime)/1000000;
+//   pretime = micros();
 
-  P = x;
-  I += P*dt;
-  D = (P-preP)/dt;
-  preP = P;
+//   P = x;
+//   I += P*dt;
+//   D = (P-preP)/dt;
+//   preP = P;
   
-  return Kp*P+Kd*D+Ki*I;
-}
-double P_calc(double x,int double target){//P制御の計算部分
+//   return Kp*P+Kd*D+Ki*I;
+// }
+// double P_calc(double x,int double target){//P制御の計算部分
 
-  P = x-target;
+//   P = x-target;
   
-  return Kp2*P;
-}
+//   return Kp2*P;
+// }
 void forward_mode(){
   digitalWrite(2,HIGH);
   digitalWrite(4,LOW);
@@ -130,22 +131,22 @@ void forward_mode(){
   //前進するよ
 }
 
-double get_dist(int trig,int echo){ //距離を返す。タイムアウト時はlostを1にして0を返す。
-  double duration,distance;
-  digitalWrite(trig, LOW);
-  digitalWrite(echo, LOW);
+// double get_dist(int trig,int echo){ //距離を返す。タイムアウト時はlostを1にして0を返す。
+//   double duration,distance;
+//   digitalWrite(trig, LOW);
+//   digitalWrite(echo, LOW);
  
-  delayMicroseconds(1);
-  digitalWrite(trig, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trig, LOW);
-  duration = pulseIn(echo, HIGH,timeout);
-  if(duration=0){
-    lost=1;
-    return 0;
-  }else{    
-    distance = duration * 0.000001 * 34000 / 2;
+//   delayMicroseconds(1);
+//   digitalWrite(trig, HIGH);
+//   delayMicroseconds(10);
+//   digitalWrite(trig, LOW);
+//   duration = pulseIn(echo, HIGH,timeout);
+//   if(duration=0){
+//     lost=1;
+//     return 0;
+//   }else{    
+//     distance = duration * 0.000001 * 34000 / 2;
 
-    return distance;
-  }
-}
+//     return distance;
+//   }
+// }
