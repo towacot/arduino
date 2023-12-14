@@ -2,19 +2,17 @@ const int timeout =2000;//pulesInのタイムアウト時間（マイクロ秒�
 //設定
 #include "pin_num.h"
 int lost=0;//見失ったとき1にする
-int reboot=0;
 double space=4;//車間距離cm
-int base_duty=200;
+int base_duty=150;
 
-double Kp=20;
-double Ki=0;
+double Kp=10;
 double Kd=0;
 double Kp2=0;
 //制御定数
 
 double Ldist = 0;
 double Rdist= 0;
-double dist=0;
+double dist=10;
 double LRdiff = 0;
 //制御をかける数
 
@@ -28,11 +26,11 @@ double mag;
 
 double dt;
 double pretime;
-double P,I,D;
+double P,D;
 double preP = 0;
 //制御に関わる数
 void setup() {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   pinMode(trigPin_left, OUTPUT);
   pinMode(echoPin_left, INPUT);
   pinMode(trigPin_right, OUTPUT);
@@ -62,7 +60,10 @@ void following(){
   Rdist=get_dist(trigPin_right,echoPin_right);
   LRdiff=Ldist-Rdist;
   dist=(Ldist+Rdist)/2;//左右差と平均距離を導出
-  Serial.println(dist);
+  if((Ldist<space)||(Rdist<space)){
+    dist=0;
+  }
+  //Serial.println(dist);
   if(lost==1){
     lost_ctrl(prediff,predist);
   }else{
@@ -77,7 +78,8 @@ void clearlost(){
 
 void regular_ctrl(double LRdiff,double dist){//平常時の制御
   adj=PID_calc(LRdiff);
-  mag=get_mag(dist,space);
+  mag=1;
+  // mag=get_mag(dist,space);
   //制御を行う
 
   analogWrite(3,mag*(base_duty-adj));//右制御
@@ -89,7 +91,8 @@ void regular_ctrl(double LRdiff,double dist){//平常時の制御
 void lost_ctrl(double diff,double dist){//lost時の制御 I制御を行ってもいいかも
 
   adj=PID_calc(diff);
-  mag=get_mag(dist,space);
+  mag=1;
+  // mag=get_mag(dist,space);
   //制御を行う
 
   //なにか倍率をかける？
@@ -97,23 +100,14 @@ void lost_ctrl(double diff,double dist){//lost時の制御 I制御を行って�
   analogWrite(motorP_left,mag*(base_duty+adj));//左制御
 }
 
-double get_mag(double dist,double space){//回転数に作用する倍率を決める もっとうまくやれるかも
-  if(space<=dist){
-    base_duty=150;
-    reboot=0;
-    return 1;
-    // return P_calc(dist,space);
-  }else if(dist<space){
-    digitalWrite(4,HIGH);
-    digitalWrite(2,LOW);
-    digitalWrite(8,HIGH);
-    digitalWrite(7,LOW);
-    stop();
-    base_duty=10;
-    adj=0;
-    return 1;
-  }
-}
+// double get_mag(double dist,double space){//回転数に作用する倍率を決める もっとうまくやれるかも
+//   if(space<=dist){
+//     return 1;
+//     // return P_calc(dist,space);
+//   }else if(dist<space){
+//     return 0.0000001;
+//   }
+// }
 
 void forward_mode(){
   digitalWrite(2,HIGH);
