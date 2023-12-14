@@ -1,3 +1,4 @@
+double test =100.5;
 void setup() {
   // put your setup code here, to run once:
   pinMode(2, OUTPUT);
@@ -15,7 +16,7 @@ void loop() {
   digitalWrite(4,LOW);
   digitalWrite(7,HIGH);
   digitalWrite(8,LOW);
-  analogWrite(3,255);
-  analogWrite(9,255);
+  analogWrite(3,test);
+  analogWrite(9,test);
 
 }

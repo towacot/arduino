@@ -2,7 +2,7 @@ const int trigPin_right =10;
 const int echoPin_right = 11;
 
 const int trigPin_left = 12;
-const int echoPin_left = 13;
+const int echoPin_left = 6;
 
 
 const int motorV1_right =2;

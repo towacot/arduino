@@ -1,11 +1,12 @@
-const int timeout =100;//pulesInのタイムアウト時間（マイクロ秒）
+const int timeout =2000;//pulesInのタイムアウト時間（マイクロ秒）
 //設定
 #include "pin_num.h"
 int lost=0;//見失ったとき1にする
+int reboot=0;
 double space=4;//車間距離cm
-int base_duty=50;
+int base_duty=200;
 
-double Kp=0;
+double Kp=20;
 double Ki=0;
 double Kd=0;
 double Kp2=0;
@@ -46,21 +47,25 @@ void setup() {
 }
 void loop() {
   forward_mode();
+  // if(reboot==0){
+  //   forward_mode();
+  // }else if(reboot==1){
+  //   stop();
+  // }
   following();
 
 }
 
 void following(){
-
+  clearlost();
   Ldist=get_dist(trigPin_left,echoPin_left);
   Rdist=get_dist(trigPin_right,echoPin_right);
   LRdiff=Ldist-Rdist;
   dist=(Ldist+Rdist)/2;//左右差と平均距離を導出
-
+  Serial.println(dist);
   if(lost==1){
     lost_ctrl(prediff,predist);
   }else{
-    clearlost();
     regular_ctrl(LRdiff,dist);
   }
   
@@ -93,13 +98,22 @@ void lost_ctrl(double diff,double dist){//lost時の制御 I制御を行って�
 }
 
 double get_mag(double dist,double space){//回転数に作用する倍率を決める もっとうまくやれるかも
-  if(space<dist){
-    return P_calc(dist,space);
-  }else{
-    return 0;
+  if(space<=dist){
+    base_duty=150;
+    reboot=0;
+    return 1;
+    // return P_calc(dist,space);
+  }else if(dist<space){
+    digitalWrite(4,HIGH);
+    digitalWrite(2,LOW);
+    digitalWrite(8,HIGH);
+    digitalWrite(7,LOW);
+    stop();
+    base_duty=10;
+    adj=0;
+    return 1;
   }
 }
-
 
 void forward_mode(){
   digitalWrite(2,HIGH);
@@ -108,7 +122,12 @@ void forward_mode(){
   digitalWrite(8,LOW);
   //前進するよ
 }
-
+void stop(){
+    digitalWrite(2,HIGH);
+    digitalWrite(4,HIGH);
+    digitalWrite(7,HIGH);
+    digitalWrite(8,HIGH);
+}
 // double PID_calc(double x){//PID制御の計算部分
 
 //   dt = (micros()-pretime)/1000000;
