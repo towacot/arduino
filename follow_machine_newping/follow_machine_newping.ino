@@ -108,7 +108,7 @@ double get_mag(double dist,double space){//回転数に作用する倍率を決�
     return 1;
     // return P_calc(dist,space);
   }else if(dist<space){
-    return 0.0000001;
+    return 0;
   }
 }
 
