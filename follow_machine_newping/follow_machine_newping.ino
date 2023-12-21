@@ -4,7 +4,7 @@ const int timeout =2000;//pulesInのタイムアウト時間（マイクロ秒�
 #include <NewPing.h>
 int lost=0;//見失ったとき1にする
 double space=5;//車間距離cm
-int base_duty=20;
+int base_duty=30;
 
 double Kp=4.5;
 //4.5 yosi
@@ -31,7 +31,7 @@ double pretime;
 double P,D;
 double preP = 0;
 //制御に関わる数
-int MAX_DISTANCE =20;
+int MAX_DISTANCE =15;
 NewPing Lsonar(Pin_left,Pin_left, MAX_DISTANCE);
 NewPing Rsonar(Pin_right,Pin_right, MAX_DISTANCE);
 void setup() {
