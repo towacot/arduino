@@ -65,7 +65,7 @@ void following(){
   LRdiff=Ldist-Rdist;
   dist=(Ldist+Rdist)/2;//左右差と平均距離を導出
   if((Ldist<space)||(Rdist<space)){
-    dist=0;
+    dist=1;
   }
   //Serial.println(dist);
   if(lost==1){
